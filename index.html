@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSCI 4830 — Priyaj Shrestha</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f0f4f8;
+    --surface2: #e2e8f0;
+    --text: #1a2744;
+    --muted: #000000;
+    --border: rgba(46, 66, 81, 0.12);
+    --accent: #006290;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+
+    --heading-font: 'DM Serif Display', Georgia, serif;
+    --body-font: 'DM Sans', sans-serif;
+
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body-font);
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === NAV=== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 68px;
+    background:  rgba(207, 207, 207, 0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-title {
+    font-family: 'Arial', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    user-select: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 8px 20px;
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .nav-links a.active {
+    color: var(--accent);
+  }
+
+  /* === PAGES=== */
+  .page {
+    display: none;
+    min-height: 100vh;
+    padding-top: 68px;
+  }
+  .page.active { display: block; }
+
+  /* === HERO STRIP=== */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 64px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 80% 40%, rgba(76,195,247,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(124,58,237,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* === ABOUT PAGE=== */
+  .about-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 72px 48px 100px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .avatar-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .avatar-frame {
+    width: 200px;
+    height: 200px;
+    border-radius: 18px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .avatar-frame:hover { border-color: rgba(79,195,247,0.4); }
+
+  .avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+  }
+
+  .avatar-placeholder svg { opacity: 0.4; }
+
+  .avatar-placeholder span {
+    font-size: 11px;
+    font-family: var(--mono-font);
+    letter-spacing: 0.08em;
+    text-align: center;
+    opacity: 0.5;
+  }
+
+  .about-tag {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .about-name {
+    font-family: var(--heading-font);
+    font-size: clamp(36px, 5vw, 52px);
+    line-height: 1.1;
+    margin: 8px 0 24px;
+    color: var(--text);
+  }
+
+  .about-bio {
+    color: #5e6771;
+    font-size: 16px;
+    line-height: 1.8;
+    max-width: 560px;
+  }
+
+  .about-bio p + p { margin-top: 16px; }
+
+  .about-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--surface);
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .chip:hover { border-color: rgba(79,195,247,0.3); color: var(--text); }
+  .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 56px 0;
+  }
+
+  /* === PROJECT PAGE=== */
+  .project-scroll {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 72px 48px 120px;
+  }
+
+  .section-eyebrow {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-eyebrow::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.3;
+  }
+
+  .section-title {
+    font-family: var(--heading-font);
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .section-body {
+    color: #505860;
+    font-size: 15.5px;
+    line-height: 1.85;
+  }
+
+  .section-body + .section-body { margin-top: 14px; }
+
+  .project-block {
+    margin-bottom: 72px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 40px 0;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+
+  .stat-card:hover {
+    border-color: rgba(79,195,247,0.3);
+    transform: translateY(-3px);
+  }
+
+  .stat-num {
+    font-family: var(--heading-font);
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: var(--mono-font);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+    font-size: 14px;
+  }
+
+  .compare-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compare-table th:last-child { color: var(--accent); }
+
+  .compare-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(99,179,237,0.06);
+    color:#505860;
+  }
+
+  .compare-table td:last-child { color: var(--text); font-weight: 500; }
+
+  .compare-table tr:hover td { background: var(--surface); }
+
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    margin: 32px 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+    opacity: 0.3;
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 7px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+
+  .tl-period {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  .tl-label {
+    font-weight: 500;
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .tl-desc {
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .method-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .mtag {
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--mono-font);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: rgba(79,195,247,0.04);
+  }
+
+  .poster-embed {
+    margin: 40px 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .poster-embed img {
+    width: 100%;
+    display: block;
+  }
+
+  .poster-label {
+    padding: 14px 20px;
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .poster-label::before {
+    content: '\25CF';
+    font-size: 7px;
+    color: var(--accent3);
+  }
+
+  /* === RESUME PAGE=== */
+  .resume-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 72px 48px 100px;
+  }
+
+  .resume-header {
+    margin-bottom: 40px;
+  }
+
+  .resume-embed-frame {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+    min-height: 140vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .resume-embed-frame iframe {
+    width: 100%;
+    flex: 1;
+    min-height: 120vh;
+    border: none;
+    display: block;
+  }
+
+  .resume-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .resume-toolbar span {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .resume-placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .resume-placeholder-icon {
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    border: 1.5px dashed rgba(79,195,247,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(79,195,247,0.4);
+    font-size: 28px;
+  }
+
+  .resume-placeholder h3 {
+    font-family: var(--heading-font);
+    font-size: 22px;
+    color: var(--text);
+  }
+
+  .resume-placeholder p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 400px;
+    line-height: 1.7;
+  }
+
+  .resume-code-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 16px;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .resume-code-block pre {
+    font-family: var(--mono-font);
+    font-size: 13px;
+    color: #9baabb;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+
+  .resume-code-block .hl { color: var(--accent); }
+
+  /* === SCROLLBAR=== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+  /* === RESPONSIVE=== */
+  @media (max-width: 700px) {
+    nav { padding: 0 20px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .avatar-frame { width: 140px; height: 140px; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .project-scroll, .about-wrap, .resume-wrap { padding: 48px 24px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-title">CSCI 4830</span>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('about')" id="nav-about" class="active">About Me</a></li>
+    <li><a href="#" onclick="showPage('project')" id="nav-project">My Project</a></li>
+    <li><a href="#" onclick="showPage('resume')" id="nav-resume">Resume</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════ ABOUT ════════════════════════════ -->
+<div id="page-about" class="page active">
+  <div class="about-wrap">
+
+    <div class="about-grid">
+      <div class="avatar-block">
+        <div class="avatar-frame">
+          <!-- REPLACE src="" with your photo path, e.g. src="photo.jpg" -->
+          <img id="profile-img" src="DSC03685 2.jpg" alt="Priyaj Shrestha"
+               onerror="this.style.display='none'; document.getElementById('avatar-ph').style.display='flex';">
+          <div class="avatar-placeholder" id="avatar-ph"
+              
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+
+          </div>
+        </div>
+        <span class="about-tag">CU Boulder</span>
+      </div>
+
+      <div>
+        <div class="section-eyebrow">Researcher</div>
+        <h1 class="about-name">Priyaj<br>Shrestha</h1>
+        <div class="about-bio">
+          <p>
+            <!-- REPLACE this block with your own bio -->
+            Hi! I'm Priyaj, a Computer Science student at CU Boulder with a deep interest in machine learning and sports analytics. I combine a strong mathematical foundation with hands-on Python experience to build models that turn raw data into actionable insights.
+          </p>
+          <p>
+            My current research focuses on predictive event modeling in soccer — using sequential neural networks to forecast in-game outcomes from live positional data. I aim to bridge the gap between technical research and real-world coaching decisions.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════ PROJECT ════════════════════════════ -->
+<div id="page-project" class="page">
+  <div class="project-scroll">
+
+    <!-- Title -->
+    <div class="project-block" style="animation-delay:0s">
+      <div class="section-eyebrow">CSCI 4830 — Research Project</div>
+      <h2 class="section-title">Predictive Event Modeling in Soccer Using Sequential Neural Networks</h2>
+      <p class="section-body">
+        Traditional sports analytics relies on static, snapshot-based statistics that fail to capture the fluid complexity of a game. This project leverages real-time positional data to move beyond historical summaries and enable dynamic, sequence-aware event prediction.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="project-block" style="animation-delay:0.05s">
+      <div class="section-eyebrow">Results</div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num">0.76</div>
+          <div class="stat-label">Avg AUC Across All Event Types</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">+17%</div>
+          <div class="stat-label">Shot Prediction Improvement Over Baseline</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">+12%</div>
+          <div class="stat-label">Accuracy Gain From Off-Ball Positions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">~380</div>
+          <div class="stat-label">Full League Season Matches Tested</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives -->
+    <div class="project-block" style="animation-delay:0.1s">
+      <div class="section-eyebrow">Objectives</div>
+      <h2 class="section-title" style="font-size:clamp(22px,3vw,30px)">Real-Time Forecasting</h2>
+      <p class="section-body">
+        The purpose of this project is to develop a machine learning model that predicts the probability of specific event outcomes — such as shots, crosses, or turnovers — based on live positional data. While existing metrics evaluate past statistics, this research focuses on real-time forecasting to contribute to crucial play-making decisions.
+      </p>
+      <p class="section-body" style="margin-top:12px">
+        The primary objective is to quantify how player movements — both on-ball and off-ball — influence the likelihood of in-game events. Coaches and analysts stand to benefit from these insights to maximize effectiveness and efficiency on the field.
+      </p>
+    </div>
+
+    <!-- Methodology -->
+    <div class="project-block" style="animation-delay:0.15s">
+      <div class="section-eyebrow">Methodology</div>
+      <h2 class="section-title" style="font-size:clamp(22px,3vw,30px)">How It Works</h2>
+      <p class="section-body">
+        This research utilizes large-scale event data collection, processing player coordinates and timestamps to build sequential model inputs. The core architecture is an LSTM (Long Short-Term Memory) network, chosen because soccer events are non-independent — the probability of a shot is highly dependent on the sequence of events preceding it.
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Traditional Analytics</th>
+            <th>This Project</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Static Snapshot</td><td>Sequential Data (LSTM)</td></tr>
+          <tr><td>On-Ball Focus Only</td><td>Off-Ball + On-Ball Variables</td></tr>
+          <tr><td>Historical Summaries</td><td>Real-Time Forecasting</td></tr>
+        </tbody>
+      </table>
+
+      <div class="method-tags">
+        <span class="mtag">LSTM</span>
+        <span class="mtag">Event/Tracking API</span>
+        <span class="mtag">Velocity Vectors</span>
+        <span class="mtag">Pitch Control</span>
+        <span class="mtag">Cross Validation</span>
+        <span class="mtag">Shot Angle</span>
+        <span class="mtag">Feature Engineering</span>
+      </div>
+    </div>
+
+    
+
+    <!-- Timeline -->
+    <div class="project-block" style="animation-delay:0.25s">
+      <div class="section-eyebrow">Timeline</div>
+      <h2 class="section-title" style="font-size:clamp(22px,3vw,30px)">Project Roadmap</h2>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-period">Weeks 1–4</div>
+          <div class="tl-label">Data Acquisition</div>
+          <div class="tl-desc">Accessing the event API, setting up authentication, handling missing values, and structuring data into time sequences.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-period">Weeks 5–8</div>
+          <div class="tl-label">Feature Engineering</div>
+          <div class="tl-desc">Defining and calculating spatial variables — pitch control, velocity vectors, and player positions — to serve as model inputs.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-period">Weeks 9–12</div>
+          <div class="tl-label">Model Development</div>
+          <div class="tl-desc">Building and tuning the LSTM architecture, performing cross-validation to ensure model robustness.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-period">Weeks 13–16</div>
+          <div class="tl-label">Testing & Visualization</div>
+          <div class="tl-desc">Applying the model to a test league season and building visual dashboards to represent shifting event probabilities.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-period">Weeks 17–19</div>
+          <div class="tl-label">Final Analysis & Reporting</div>
+          <div class="tl-desc">Synthesizing findings into a final paper and preparing a presentation for a research conference.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="project-block" style="animation-delay:0.3s">
+      <div class="section-eyebrow">Conclusion</div>
+      <h2 class="section-title" style="font-size:clamp(22px,3vw,30px)">Takeaways & Future Work</h2>
+      <p class="section-body">
+        This project demonstrates that sequential, off-ball-aware models significantly outperform traditional static analytics. LSTM networks are well-suited for capturing the temporal dependencies inherent in soccer gameplay.
+      </p>
+      <p class="section-body" style="margin-top:12px">
+        <strong style="color:var(--text)">Implications:</strong> Coaches can use real-time probability dashboards to inform substitutions, pressing triggers, and set-piece strategies.
+      </p>
+      <p class="section-body" style="margin-top:12px">
+        <strong style="color:var(--text)">Future Work:</strong> Expand to other sports (basketball, hockey) with similar event structures; integrate video data alongside positional tracking; deploy as a live dashboard tool for club analysts.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════ RESUME ════════════════════════════ -->
+<div id="page-resume" class="page">
+  <div class="resume-wrap">
+
+    <div class="resume-header">
+      <div class="section-eyebrow">Curriculum Vitae</div>
+      <h2 class="section-title" style="font-size:clamp(28px,4vw,38px)">Resume</h2>
+    </div>
+
+    <div class="resume-embed-frame">
+      <div class="resume-toolbar">
+        <span>resume.pdf</span>
+        <span>Priyaj Shrestha</span>
+      </div>
+
+      <!--
+        ════════════════════════════════════════════════════════════
+        TO EMBED YOUR RESUME:
+        Replace the placeholder below with ONE of these options:
+
+        OPTION A — PDF file in same folder:
+          <iframe src="your-resume.pdf" ...></iframe>
+
+        OPTION B — Google Drive public link:
+          <iframe src="https://drive.google.com/file/d/FILE_ID/preview" ...></iframe>
+
+        OPTION C — Any hosted PDF URL:
+          <iframe src="https://yoursite.com/resume.pdf" ...></iframe>
+        ════════════════════════════════════════════════════════════
+      -->
+
+      <!-- PASTE YOUR IFRAME HERE — example below, replace src: -->
+ 
+      <iframe
+        src="Priyaj Shrestha.Resume.pdf"
+        width="100%"
+        style="min-height:85vh; border:none; display:block;"
+        title="Priyaj Shrestha Resume"
+      ></iframe>
+
+
+      
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false;
+  }
+</script>
+
+</body>
+</html>
